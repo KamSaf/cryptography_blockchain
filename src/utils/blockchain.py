@@ -76,3 +76,13 @@ class Blockchain(object):
         Block -> Last Block in the chain
         """
         return self.chain[-1]
+
+    def get_all_blocks(self) -> list[dict]:
+        """
+        Returns full all Blocks in chain as list of dictionaries.
+
+        Returns:
+        ------------------------------------------------------
+        list[dict] -> List of all block as dictionaries
+        """
+        return [block.to_dict() for block in self.chain]
