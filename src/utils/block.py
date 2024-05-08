@@ -78,3 +78,7 @@ class Block(object):
         guess = f'{previous_proof}{proof}'.encode()
         guess_hash = hashlib.sha256(guess).hexdigest()
         return guess_hash[:Block.ZERO_PADDING_LENGTH] == '0' * Block.ZERO_PADDING_LENGTH
+
+
+if __name__ == '__main__':
+    pass

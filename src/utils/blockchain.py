@@ -100,3 +100,7 @@ class Blockchain(object):
         list[dict] -> List of all pending transactions as dictionaries
         """
         return self.pending_transactions
+
+
+if __name__ == '__main__':
+    pass

@@ -10,7 +10,7 @@ node_identifier = str(uuid4()).replace('-', '')
 blockchain = Blockchain()
 
 
-# TODO dzielenie tranzakcji, zaawansowanie usuwanie tranzakcji przy tworzeniu bloku,
+# TODO dzielenie tranzakcji, zaawansowanie usuwanie transakcji przy tworzeniu bloku,
 
 
 @app.route('/mine', methods=['GET'])
@@ -63,3 +63,7 @@ def get_full_chain():
         "chain": blockchain.get_all_blocks(),
         "length": len(blockchain.chain)
     }
+
+
+if __name__ == '__main__':
+    pass
