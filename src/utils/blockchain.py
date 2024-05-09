@@ -147,6 +147,22 @@ class Blockchain(object):
                 wallet_status -= transaction["amount"]
         return wallet_status
 
+    def check_transaction_possible(self, sender: str, amount: float) -> bool:
+        """
+        Checks if transaction is possible (if sender is capable of sending given amount of money).
+
+        Parameters:
+        ------------------------------------------------------
+        sender: str -> Address of transaction sender.
+        amount: float -> Amount of money to be transfered.
+
+        Returns:
+        ------------------------------------------------------
+        bool -> True if transaction possible, False if not.
+        """
+        sender_wallet_status = self.check_wallet_status(address=sender)
+        return sender_wallet_status - amount >= 0
+
     def valid_chain(self, chain: list) -> bool:
         """
         Determine if a given blockchain is valid.

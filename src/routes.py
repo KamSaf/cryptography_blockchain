@@ -10,8 +10,6 @@ NODE_IDENTIFIER = str(uuid4()).replace('-', '')
 BLOCKCHAIN = Blockchain()
 
 
-# TODO sprawdzanie czy sender nie jest bankrutem
-
 @app.route('/transactions', methods=['GET'])
 def get_transactions():
     return {
@@ -37,6 +35,9 @@ def new_transaction():
         amount = float(request_data["amount"])
     except Exception:
         return {"status_code": 422, "detail": "Invalid amount data type (needs to be numeric)"}
+
+    if not BLOCKCHAIN.check_transaction_possible(sender=request_data["sender"], amount=amount):
+        return {"status_code": 406, "detail": "This transaction is impossible. Sender doesn't have enough money."}
 
     try:
         block_index = BLOCKCHAIN.add_transaction(sender=request_data["sender"], amount=amount, recipient=request_data["recipient"])
