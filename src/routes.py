@@ -6,22 +6,21 @@ import json
 from src.utils.block import Block
 
 routes_bp = Blueprint('routes', __name__)
-node_identifier = str(uuid4()).replace('-', '')
-blockchain = Blockchain()
+NODE_IDENTIFIER = str(uuid4()).replace('-', '')
+BLOCKCHAIN = Blockchain()
 
 
-# TODO dzielenie transakcji, zaawansowanie usuwanie transakcji przy tworzeniu bloku, nasłuchiwanie przed kazdą iteracji kopania, dodać fee przy kopaniu
-# zamiast rejestracji w sieci dołącanie do sieci, czyli wysyłanie do wszystkich węzłów informacji o dołączeniu do sieci nowego węzła, wczytywanie z pliku
+# TODO dzielenie transakcji, zaawansowanie usuwanie transakcji przy tworzeniu bloku, nasłuchiwanie przed kazdą iteracji kopania, dodać fee przy kopaniu, sprawdzanie czy sender nie jest bankrutem
 
 
 @app.route('/mine', methods=['GET'])
 def mine():
-    if len(blockchain.pending_transactions) == 0:
+    if len(BLOCKCHAIN.pending_transactions) == 0:
         return {"status_code": 204, "message": "No pending transactions."}
 
-    previous_block = blockchain.get_last_block()
+    previous_block = BLOCKCHAIN.get_last_block()
     proof = Block.proof_of_work(previous_proof=previous_block.proof)
-    blockchain.add_block(previous_hash=previous_block.hash(), proof=proof, node_identifier=node_identifier)
+    BLOCKCHAIN.add_block(previous_hash=previous_block.hash(), proof=proof, node_identifier=NODE_IDENTIFIER)
     return {"status_code": 201, "detail": "New block created!"}
 
 
@@ -34,7 +33,7 @@ def register_nodes():
         return {"status_code": 400, "detail": "No node address given"}
     nodes = request_data["nodes"]
     for node in nodes:
-        blockchain.register_node(address=node)
+        BLOCKCHAIN.register_node(address=node)
     return {"status_code": 201, "detail": "New nodes has been registered!"}
 
 
@@ -55,7 +54,7 @@ def new_transaction():
 
     sender = request_data["sender"] if "sender" in request_data.keys() else '-'
     try:
-        block_index = blockchain.add_transaction(sender=sender, amount=amount, recipient=request_data["recipient"])
+        block_index = BLOCKCHAIN.add_transaction(sender=sender, amount=amount, recipient=request_data["recipient"])
         return {"status_code": 200, "detail": f"Transaction successfully assigned to Block {block_index}"}
     except Exception:
         return {"status_code": 500, "detail": "Unexpected error occured"}
@@ -65,8 +64,8 @@ def new_transaction():
 def get_transactions():
     return {
         "status_code": 200,
-        "pending_transactions": blockchain.pending_transactions,
-        "transactions_number": len(blockchain.pending_transactions)
+        "pending_transactions": BLOCKCHAIN.pending_transactions,
+        "transactions_number": len(BLOCKCHAIN.pending_transactions)
     }
 
 
@@ -74,8 +73,8 @@ def get_transactions():
 def get_nodes():
     return {
         "status_code": 200,
-        "nodes": list(blockchain.nodes),
-        "nodes_number": len(blockchain.nodes)
+        "nodes": list(BLOCKCHAIN.nodes),
+        "nodes_number": len(BLOCKCHAIN.nodes)
     }
 
 
@@ -83,8 +82,17 @@ def get_nodes():
 def get_full_chain():
     return {
         "status_code": 200,
-        "chain": blockchain.get_all_blocks(),
-        "length": len(blockchain.chain)
+        "chain": BLOCKCHAIN.get_all_blocks(),
+        "length": len(BLOCKCHAIN.chain)
+    }
+
+
+@app.route('/wallet', methods=['GET'])
+def get_wallet_status():
+    return {
+        "status_code": 200,
+        "node_identifier": NODE_IDENTIFIER,
+        "wallet_state": BLOCKCHAIN.check_wallet_status(address=NODE_IDENTIFIER)
     }
 
 

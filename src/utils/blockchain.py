@@ -1,5 +1,6 @@
 from .block import Block
 from urllib.parse import urlparse
+from itertools import chain
 
 
 class Blockchain(object):
@@ -20,7 +21,7 @@ class Blockchain(object):
 
         Parameters:
         ------------------------------------------------------
-        address: str -> URL address of new blockchain node
+        address: str -> URL address of new blockchain node.
         """
         parsed_url = urlparse(address)
         self.nodes.add(parsed_url.netloc)
@@ -32,12 +33,12 @@ class Blockchain(object):
 
         Parameters:
         ------------------------------------------------------
-        previous_hash: str -> Hash of the previous Block
-        proof: str -> Proof given by Proof of Work algorithm
+        previous_hash: str -> Hash of the previous Block.
+        proof: str -> Proof given by Proof of Work algorithm.
 
         Returns:
         ------------------------------------------------------
-        Block -> New Block object
+        Block -> New Block object.
         """
 
         # if len(self.pending_transactions) > Block.MAX_TRANSACTIONS_NUMBER:
@@ -74,7 +75,7 @@ class Blockchain(object):
 
         Returns:
         ------------------------------------------------------
-        int -> Index of the Block which will hold the transaction,
+        int -> Index of the Block which will hold the transaction.
         """
 
         self.pending_transactions.append({
@@ -91,7 +92,7 @@ class Blockchain(object):
 
         Returns:
         ------------------------------------------------------
-        Block -> Last Block in the chain
+        Block -> Last Block in the chain.
         """
         return self.chain[-1]
 
@@ -101,7 +102,7 @@ class Blockchain(object):
 
         Returns:
         ------------------------------------------------------
-        list[dict] -> List of all block as dictionaries
+        list[dict] -> List of all block as dictionaries.
         """
         return [block.to_dict() for block in self.chain]
 
@@ -111,9 +112,32 @@ class Blockchain(object):
 
         Returns:
         ------------------------------------------------------
-        list[dict] -> List of all pending transactions as dictionaries
+        list[dict] -> List of all pending transactions as dictionaries.
         """
         return self.pending_transactions
+
+    def check_wallet_status(self, address: str) -> float:
+        """
+        Returns state of wallet of the given node address.
+
+        Parameters:
+        ------------------------------------------------------
+        address: str -> Address of the node.
+
+        Returns:
+        ------------------------------------------------------
+        float -> State of wallet.
+
+        """
+        wallet_status = 0
+        transactions = list(chain.from_iterable([block.transactions for block in self.chain]))
+
+        for transaction in transactions:
+            if transaction["recipient"] == address:
+                wallet_status += transaction["amount"]
+            elif transaction["sender"] == address:
+                wallet_status -= transaction["amount"]
+        return wallet_status
 
 
 if __name__ == '__main__':

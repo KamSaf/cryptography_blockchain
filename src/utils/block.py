@@ -59,7 +59,7 @@ class Block(object):
         while Block.valid_proof(previous_proof, proof) is False:
             proof += 1
 
-        return proof
+        return str(proof)
 
     @staticmethod
     def valid_proof(previous_proof, proof) -> bool:
