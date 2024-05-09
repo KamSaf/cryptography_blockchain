@@ -1,11 +1,12 @@
 from .block import Block
 from urllib.parse import urlparse
 from itertools import chain
+import requests
 
 
 class Blockchain(object):
 
-    REWARD = 5
+    REWARD = 1
 
     def __init__(self):
         self.chain = []
@@ -14,6 +15,24 @@ class Blockchain(object):
 
         # Create initial block
         self.add_block(previous_hash='1', proof='100')
+
+    @staticmethod
+    def from_dict(blockchain_data: list) -> list[Block]:
+        """
+        Converts list of Block dictionaries into list of objects.
+
+        Parameters:
+        ------------------------------------------------------
+        blockchain_data: list -> List of Blocks as dictionaries.
+
+        Parameters:
+        ------------------------------------------------------
+        list[Block] -> List of Blocks as objects.
+        """
+        chain_of_objects = []
+        for block in blockchain_data:
+            chain_of_objects.append(Block.from_dict(block_dict=block))
+        return chain_of_objects
 
     def register_node(self, address: str) -> None:
         """
@@ -25,7 +44,6 @@ class Blockchain(object):
         """
         parsed_url = urlparse(address)
         self.nodes.add(parsed_url.netloc)
-        print(self.nodes)
 
     def add_block(self, previous_hash: str, proof: str, node_identifier: str | None = None) -> Block:
         """
@@ -127,7 +145,6 @@ class Blockchain(object):
         Returns:
         ------------------------------------------------------
         float -> State of wallet.
-
         """
         wallet_status = 0
         transactions = list(chain.from_iterable([block.transactions for block in self.chain]))
@@ -138,6 +155,61 @@ class Blockchain(object):
             elif transaction["sender"] == address:
                 wallet_status -= transaction["amount"]
         return wallet_status
+
+    def valid_chain(self, chain: list) -> bool:
+        """
+        Determine if a given blockchain is valid.
+
+        Parameters:
+        ------------------------------------------------------
+        chain: list[dict] -> List of Blocks as dictionaries.
+
+        Returns:
+        ------------------------------------------------------
+        bool -> True if valid, False if not.
+        """
+        chain = Blockchain.from_dict(blockchain_data=chain)
+        previous_block = chain[0]
+
+        for i in range(1, len(chain)):
+            block = chain[i]
+            if block.previous_hash != previous_block.hash():
+                return False
+            if not Block.valid_proof(previous_proof=previous_block.proof, proof=block.proof):
+                return False
+
+            previous_block = block
+        return True
+
+    def resolve_conflicts(self) -> bool:
+        """
+        Resolves conflicting chains in the blockchain network, replaces chain with the longest valid one.
+
+        Returns:
+        ------------------------------------------------------
+        bool -> True if chain was replaced, False if not.
+        """
+        neighbours = self.nodes
+        new_chain = None
+        min_length = len(self.chain)
+
+        for node in neighbours:
+            response = requests.get(f'http://{node}/chain')
+
+            if response.status_code != 200:
+                continue
+
+            length = response.json()['length']
+            chain = response.json()['chain']
+            if length > min_length and self.valid_chain(chain=chain):
+                min_length = length
+                new_chain = chain
+
+        if new_chain:
+            self.chain = Blockchain.from_dict(blockchain_data=new_chain)
+            return True
+
+        return False
 
 
 if __name__ == '__main__':

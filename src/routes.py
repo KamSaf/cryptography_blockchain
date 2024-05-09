@@ -5,12 +5,13 @@ from uuid import uuid4
 import json
 from src.utils.block import Block
 
-routes_bp = Blueprint('routes', __name__)
+API_ROUTES_BP = Blueprint('api_routes', __name__)
 NODE_IDENTIFIER = str(uuid4()).replace('-', '')
 BLOCKCHAIN = Blockchain()
 
 
-# TODO dzielenie transakcji, zaawansowanie usuwanie transakcji przy tworzeniu bloku, nasłuchiwanie przed kazdą iteracji kopania, dodać fee przy kopaniu, sprawdzanie czy sender nie jest bankrutem
+# TODO nasłuchiwanie przed kazdą iteracji kopania, sprawdzanie czy sender nie jest bankrutem
+# na potrzeby testowania endpoint, który daje użytkownikowi 100 monet
 
 
 @app.route('/mine', methods=['GET'])
@@ -44,6 +45,8 @@ def new_transaction():
     request_data = json.loads(request.get_data().decode().replace('\'', '\"'))
     if "recipient" not in request_data.keys():
         return {"status_code": 400, "detail": "No recipient address given"}
+    if "sender" not in request_data.keys():
+        return {"status_code": 400, "detail": "No sender address given"}
     if "amount" not in request_data.keys():
         return {"status_code": 400, "detail": "No amount given"}
 
@@ -52,9 +55,8 @@ def new_transaction():
     except Exception:
         return {"status_code": 422, "detail": "Invalid amount data type (needs to be numeric)"}
 
-    sender = request_data["sender"] if "sender" in request_data.keys() else '-'
     try:
-        block_index = BLOCKCHAIN.add_transaction(sender=sender, amount=amount, recipient=request_data["recipient"])
+        block_index = BLOCKCHAIN.add_transaction(sender=request_data["sender"], amount=amount, recipient=request_data["recipient"])
         return {"status_code": 200, "detail": f"Transaction successfully assigned to Block {block_index}"}
     except Exception:
         return {"status_code": 500, "detail": "Unexpected error occured"}
@@ -94,6 +96,24 @@ def get_wallet_status():
         "node_identifier": NODE_IDENTIFIER,
         "wallet_state": BLOCKCHAIN.check_wallet_status(address=NODE_IDENTIFIER)
     }
+
+
+@app.route('/nodes/resolve', methods=['GET'])
+def consensus():
+    replaced = BLOCKCHAIN.resolve_conflicts()
+
+    if replaced:
+        response = {
+            'status_code': 200,
+            'message': 'Chain was replaced',
+        }
+    else:
+        response = {
+            'status_code': 200,
+            'message': 'This chain is authoritative',
+        }
+
+    return response
 
 
 if __name__ == '__main__':
