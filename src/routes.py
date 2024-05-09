@@ -10,7 +10,8 @@ node_identifier = str(uuid4()).replace('-', '')
 blockchain = Blockchain()
 
 
-# TODO dzielenie tranzakcji, zaawansowanie usuwanie transakcji przy tworzeniu bloku,
+# TODO dzielenie transakcji, zaawansowanie usuwanie transakcji przy tworzeniu bloku, nasłuchiwanie przed kazdą iteracji kopania, dodać fee przy kopaniu
+# zamiast rejestracji w sieci dołącanie do sieci, czyli wysyłanie do wszystkich węzłów informacji o dołączeniu do sieci nowego węzła, wczytywanie z pliku
 
 
 @app.route('/mine', methods=['GET'])
@@ -24,13 +25,26 @@ def mine():
     return {"status_code": 201, "detail": "New block created!"}
 
 
+@app.route('/nodes/register', methods=['POST'])
+def register_nodes():
+    if not request.get_data():
+        return {"status_code": 400, "detail": "No data given"}
+    request_data = json.loads(request.get_data().decode().replace('\'', '\"'))
+    if "nodes" not in request_data.keys():
+        return {"status_code": 400, "detail": "No node address given"}
+    nodes = request_data["nodes"]
+    for node in nodes:
+        blockchain.register_node(address=node)
+    return {"status_code": 201, "detail": "New nodes has been registered!"}
+
+
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
     if not request.get_data():
-        return {"status_code": 400, "detail": "No data send"}
+        return {"status_code": 400, "detail": "No data given"}
     request_data = json.loads(request.get_data().decode().replace('\'', '\"'))
     if "recipient" not in request_data.keys():
-        return {"status_code": 400, "detail": "No recipient address given send"}
+        return {"status_code": 400, "detail": "No recipient address given"}
     if "amount" not in request_data.keys():
         return {"status_code": 400, "detail": "No amount given"}
 
@@ -53,6 +67,15 @@ def get_transactions():
         "status_code": 200,
         "pending_transactions": blockchain.pending_transactions,
         "transactions_number": len(blockchain.pending_transactions)
+    }
+
+
+@app.route('/nodes', methods=['GET'])
+def get_nodes():
+    return {
+        "status_code": 200,
+        "nodes": list(blockchain.nodes),
+        "nodes_number": len(blockchain.nodes)
     }
 
 

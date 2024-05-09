@@ -1,4 +1,5 @@
 from .block import Block
+from urllib.parse import urlparse
 
 
 class Blockchain(object):
@@ -8,9 +9,22 @@ class Blockchain(object):
     def __init__(self):
         self.chain = []
         self.pending_transactions = []
+        self.nodes = set()
 
         # Create initial block
         self.add_block(previous_hash='1', proof='100')
+
+    def register_node(self, address: str) -> None:
+        """
+        Register new node to the list of blockchain nodes.
+
+        Parameters:
+        ------------------------------------------------------
+        address: str -> URL address of new blockchain node
+        """
+        parsed_url = urlparse(address)
+        self.nodes.add(parsed_url.netloc)
+        print(self.nodes)
 
     def add_block(self, previous_hash: str, proof: str, node_identifier: str | None = None) -> Block:
         """
