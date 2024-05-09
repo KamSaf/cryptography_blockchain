@@ -58,14 +58,6 @@ class Blockchain(object):
         ------------------------------------------------------
         Block -> New Block object.
         """
-
-        # if len(self.pending_transactions) > Block.MAX_TRANSACTIONS_NUMBER:
-        #     transactions = self.pending_transactions[:Block.MAX_TRANSACTIONS_NUMBER]
-        #     self.pending_transactions = self.pending_transactions[Block.MAX_TRANSACTIONS_NUMBER:]
-        # else:
-        #     transactions = self.pending_transactions
-        #     self.pending_transactions = []
-
         transactions = self.pending_transactions
         self.pending_transactions = []
 
@@ -95,7 +87,6 @@ class Blockchain(object):
         ------------------------------------------------------
         int -> Index of the Block which will hold the transaction.
         """
-
         self.pending_transactions.append({
             'sender': sender,
             'recipient': recipient,

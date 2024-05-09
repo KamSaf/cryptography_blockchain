@@ -10,32 +10,15 @@ NODE_IDENTIFIER = str(uuid4()).replace('-', '')
 BLOCKCHAIN = Blockchain()
 
 
-# TODO nasłuchiwanie przed kazdą iteracji kopania, sprawdzanie czy sender nie jest bankrutem
-# na potrzeby testowania endpoint, który daje użytkownikowi 100 monet
+# TODO sprawdzanie czy sender nie jest bankrutem
 
-
-@app.route('/mine', methods=['GET'])
-def mine():
-    if len(BLOCKCHAIN.pending_transactions) == 0:
-        return {"status_code": 204, "message": "No pending transactions."}
-
-    previous_block = BLOCKCHAIN.get_last_block()
-    proof = Block.proof_of_work(previous_proof=previous_block.proof)
-    BLOCKCHAIN.add_block(previous_hash=previous_block.hash(), proof=proof, node_identifier=NODE_IDENTIFIER)
-    return {"status_code": 201, "detail": "New block created!"}
-
-
-@app.route('/nodes/register', methods=['POST'])
-def register_nodes():
-    if not request.get_data():
-        return {"status_code": 400, "detail": "No data given"}
-    request_data = json.loads(request.get_data().decode().replace('\'', '\"'))
-    if "nodes" not in request_data.keys():
-        return {"status_code": 400, "detail": "No node address given"}
-    nodes = request_data["nodes"]
-    for node in nodes:
-        BLOCKCHAIN.register_node(address=node)
-    return {"status_code": 201, "detail": "New nodes has been registered!"}
+@app.route('/transactions', methods=['GET'])
+def get_transactions():
+    return {
+        "status_code": 200,
+        "pending_transactions": BLOCKCHAIN.pending_transactions,
+        "transactions_number": len(BLOCKCHAIN.pending_transactions)
+    }
 
 
 @app.route('/transactions/new', methods=['POST'])
@@ -62,15 +45,6 @@ def new_transaction():
         return {"status_code": 500, "detail": "Unexpected error occured"}
 
 
-@app.route('/transactions', methods=['GET'])
-def get_transactions():
-    return {
-        "status_code": 200,
-        "pending_transactions": BLOCKCHAIN.pending_transactions,
-        "transactions_number": len(BLOCKCHAIN.pending_transactions)
-    }
-
-
 @app.route('/nodes', methods=['GET'])
 def get_nodes():
     return {
@@ -78,6 +52,36 @@ def get_nodes():
         "nodes": list(BLOCKCHAIN.nodes),
         "nodes_number": len(BLOCKCHAIN.nodes)
     }
+
+
+@app.route('/nodes/register', methods=['POST'])
+def register_nodes():
+    if not request.get_data():
+        return {"status_code": 400, "detail": "No data given"}
+    request_data = json.loads(request.get_data().decode().replace('\'', '\"'))
+    if "nodes" not in request_data.keys():
+        return {"status_code": 400, "detail": "No node address given"}
+    nodes = request_data["nodes"]
+    for node in nodes:
+        BLOCKCHAIN.register_node(address=node)
+    return {"status_code": 201, "detail": "New nodes has been registered!"}
+
+
+@app.route('/nodes/resolve', methods=['GET'])
+def consensus():
+    replaced = BLOCKCHAIN.resolve_conflicts()
+
+    if replaced:
+        response = {
+            'status_code': 200,
+            'message': 'Chain was replaced',
+        }
+    else:
+        response = {
+            'status_code': 200,
+            'message': 'This chain is authoritative',
+        }
+    return response
 
 
 @app.route('/chain', methods=['GET'])
@@ -98,22 +102,23 @@ def get_wallet_status():
     }
 
 
-@app.route('/nodes/resolve', methods=['GET'])
-def consensus():
-    replaced = BLOCKCHAIN.resolve_conflicts()
+@app.route('/mine', methods=['GET'])
+def mine():
+    if len(BLOCKCHAIN.pending_transactions) == 0:
+        return {"status_code": 204, "message": "No pending transactions."}
 
-    if replaced:
-        response = {
-            'status_code': 200,
-            'message': 'Chain was replaced',
-        }
-    else:
-        response = {
-            'status_code': 200,
-            'message': 'This chain is authoritative',
-        }
+    previous_block = BLOCKCHAIN.get_last_block()
+    proof = Block.proof_of_work(previous_proof=previous_block.proof)
+    BLOCKCHAIN.add_block(previous_hash=previous_block.hash(), proof=proof, node_identifier=NODE_IDENTIFIER)
+    return {"status_code": 201, "detail": "New block created!"}
 
-    return response
+
+# This endpoint is here purely for testing reasons
+
+@app.route('/testing/grant', methods=['POST'])
+def grant_money():
+    block_index = BLOCKCHAIN.add_transaction(sender="-", amount=100, recipient=NODE_IDENTIFIER)
+    return {"status_code": 200, "detail": f"Transaction successfully assigned to Block {block_index}"}
 
 
 if __name__ == '__main__':
