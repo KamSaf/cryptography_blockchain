@@ -60,12 +60,16 @@ def api_register_nodes():
     if "nodes" not in request_data.keys():
         return {"status_code": 400, "detail": "No node address given"}
 
+    nodes_duplicates = BLOCKCHAIN.is_node_registered(node_or_nodes=request_data["nodes"])
     if type(request_data["nodes"]) is list:
         nodes = list(request_data["nodes"])
         for node in nodes:
             BLOCKCHAIN.register_node(address=node)
     else:
         BLOCKCHAIN.register_node(address=request_data["nodes"])
+
+    if nodes_duplicates:
+        return {"status_code": 409, "detail": "New nodes registered, duplicates where ignored"}
     return {"status_code": 201, "detail": "New nodes has been registered!"}
 
 

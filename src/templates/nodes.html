@@ -18,8 +18,8 @@
             {% if nodes %}
                 {% for node in nodes %}
                     <tr>
-                        <th scope="row">{{ loop.index }}</th>
-                        <td>{{ node }}</td>
+                        <th name="rowIndex" scope="row">{{ loop.index }}</th>
+                        <td name="nodeAddress">{{ node }}</td>
                     </tr>    
                 {% endfor %}
             {% endif %}    

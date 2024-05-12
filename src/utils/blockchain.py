@@ -35,6 +35,27 @@ class Blockchain(object):
             chain_of_objects.append(Block.from_dict(block_dict=block))
         return chain_of_objects
 
+    def is_node_registered(self, node_or_nodes: str | list[str]) -> bool:
+        """
+        Checks if node/nodes are already registered.
+
+        Parameters:
+        ------------------------------------------------------
+        node_or_nodes: str | list[str] -> URL address or list of URL addresses.
+
+        Returns:
+        ------------------------------------------------------
+        bool -> True if node/nodes are registered, False if not.
+
+        """
+        if type(node_or_nodes) is str:
+            return urlparse(node_or_nodes).netloc in self.nodes
+
+        for node in node_or_nodes:
+            if urlparse(node).netloc in self.nodes:
+                return True
+        return False
+
     def register_node(self, address: str) -> None:
         """
         Register new node to the list of blockchain nodes.
