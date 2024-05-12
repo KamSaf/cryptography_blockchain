@@ -16,7 +16,7 @@ def gui_transactions():
 
 @app.route('/nodes', methods=['GET'])
 def gui_nodes():
-    return render_template(template_name_or_list='nodes.html', transactions=BLOCKCHAIN.nodes)
+    return render_template(template_name_or_list='nodes.html', nodes=BLOCKCHAIN.nodes)
 
 
 @app.route('/wallet', methods=['GET'])
