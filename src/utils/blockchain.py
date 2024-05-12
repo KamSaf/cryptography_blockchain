@@ -54,18 +54,19 @@ class Blockchain(object):
         for node in node_or_nodes:
             if urlparse(node).netloc in self.nodes:
                 return True
-        return False
+        return False       
 
-    def register_node(self, address: str) -> None:
+    def register_node(self, node: str) -> None:
         """
         Register new node to the list of blockchain nodes.
 
         Parameters:
         ------------------------------------------------------
-        address: str -> URL address of new blockchain node.
+        node: str -> URL address of new blockchain node.
         """
-        parsed_url = urlparse(address)
-        self.nodes.add(parsed_url.netloc)
+        parsed_url = urlparse(node).netloc
+        if parsed_url:
+            self.nodes.add(parsed_url)
 
     def add_block(self, previous_hash: str, proof: str, node_identifier: str | None = None) -> Block:
         """
@@ -148,6 +149,24 @@ class Blockchain(object):
         """
         return self.pending_transactions
 
+    def transactions_history(self, address: str) -> list[dict]:
+        """
+        Returns transactions history of given node address.
+
+        Parameters:
+        ------------------------------------------------------
+        address: str -> Address of the node.
+
+        Returns:
+        ------------------------------------------------------
+        list[dict] -> Transactions history.
+        """
+        transactions = list(chain.from_iterable([block.transactions for block in self.chain]))
+        for transaction in transactions:
+            if transaction["sender"] != address and transaction["recipient"] != address:
+                transactions.remove(transaction)
+        return transactions
+
     def check_wallet_status(self, address: str) -> float:
         """
         Returns state of wallet of the given node address.
@@ -161,7 +180,7 @@ class Blockchain(object):
         float -> State of wallet.
         """
         wallet_status = 0
-        transactions = list(chain.from_iterable([block.transactions for block in self.chain]))
+        transactions = self.transactions_history(address=address)
 
         for transaction in transactions:
             if transaction["recipient"] == address:

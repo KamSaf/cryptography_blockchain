@@ -1,4 +1,3 @@
-from typing import Iterable
 from flask import Blueprint, request
 from src.config import app, NODE_IDENTIFIER, BLOCKCHAIN
 import json
@@ -33,6 +32,9 @@ def api_new_transaction():
     except Exception:
         return {"status_code": 422, "detail": "Invalid amount data type (needs to be numeric)"}
 
+    if amount <= 0:
+        return {"status_code": 406, "detail": "Amount needs to be bigger than 0."}
+
     if not BLOCKCHAIN.check_transaction_possible(sender=request_data["sender"], amount=amount):
         return {"status_code": 406, "detail": "This transaction is impossible. Sender doesn't have enough money."}
 
@@ -64,12 +66,12 @@ def api_register_nodes():
     if type(request_data["nodes"]) is list:
         nodes = list(request_data["nodes"])
         for node in nodes:
-            BLOCKCHAIN.register_node(address=node)
+            BLOCKCHAIN.register_node(node=node)
     else:
-        BLOCKCHAIN.register_node(address=request_data["nodes"])
+        BLOCKCHAIN.register_node(node=request_data["nodes"])
 
     if nodes_duplicates:
-        return {"status_code": 409, "detail": "New nodes registered, duplicates where ignored"}
+        return {"status_code": 409, "detail": "New nodes registered, duplicates where ignored."}
     return {"status_code": 201, "detail": "New nodes has been registered!"}
 
 
