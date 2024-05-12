@@ -1,17 +1,14 @@
+from typing import Iterable
 from flask import Blueprint, request
-from .config import app
-from src.utils.blockchain import Blockchain
-from uuid import uuid4
+from src.config import app, NODE_IDENTIFIER, BLOCKCHAIN
 import json
 from src.utils.block import Block
 
 API_ROUTES_BP = Blueprint('api_routes', __name__)
-NODE_IDENTIFIER = str(uuid4()).replace('-', '')
-BLOCKCHAIN = Blockchain()
 
 
-@app.route('/transactions', methods=['GET'])
-def get_transactions():
+@app.route('/api/transactions', methods=['GET'])
+def api_transactions():
     return {
         "status_code": 200,
         "pending_transactions": BLOCKCHAIN.pending_transactions,
@@ -19,8 +16,8 @@ def get_transactions():
     }
 
 
-@app.route('/transactions/new', methods=['POST'])
-def new_transaction():
+@app.route('/api/transactions/new', methods=['POST'])
+def api_new_transaction():
     if not request.get_data():
         return {"status_code": 400, "detail": "No data given"}
     request_data = json.loads(request.get_data().decode().replace('\'', '\"'))
@@ -46,8 +43,8 @@ def new_transaction():
         return {"status_code": 500, "detail": "Unexpected error occured"}
 
 
-@app.route('/nodes', methods=['GET'])
-def get_nodes():
+@app.route('/api/nodes', methods=['GET'])
+def api_nodes():
     return {
         "status_code": 200,
         "nodes": list(BLOCKCHAIN.nodes),
@@ -55,21 +52,25 @@ def get_nodes():
     }
 
 
-@app.route('/nodes/register', methods=['POST'])
-def register_nodes():
+@app.route('/api/nodes/register', methods=['POST'])
+def api_register_nodes():
     if not request.get_data():
         return {"status_code": 400, "detail": "No data given"}
     request_data = json.loads(request.get_data().decode().replace('\'', '\"'))
     if "nodes" not in request_data.keys():
         return {"status_code": 400, "detail": "No node address given"}
-    nodes = request_data["nodes"]
-    for node in nodes:
-        BLOCKCHAIN.register_node(address=node)
+
+    if type(request_data["nodes"]) is list:
+        nodes = list(request_data["nodes"])
+        for node in nodes:
+            BLOCKCHAIN.register_node(address=node)
+    else:
+        BLOCKCHAIN.register_node(address=request_data["nodes"])
     return {"status_code": 201, "detail": "New nodes has been registered!"}
 
 
-@app.route('/nodes/resolve', methods=['GET'])
-def consensus():
+@app.route('/api/nodes/resolve', methods=['GET'])
+def api_consensus():
     replaced = BLOCKCHAIN.resolve_conflicts()
 
     if replaced:
@@ -85,8 +86,8 @@ def consensus():
     return response
 
 
-@app.route('/chain', methods=['GET'])
-def get_full_chain():
+@app.route('/api/chain', methods=['GET'])
+def api_full_chain():
     return {
         "status_code": 200,
         "chain": BLOCKCHAIN.get_all_blocks(),
@@ -94,8 +95,8 @@ def get_full_chain():
     }
 
 
-@app.route('/wallet', methods=['GET'])
-def get_wallet_status():
+@app.route('/api/wallet', methods=['GET'])
+def api_wallet():
     return {
         "status_code": 200,
         "node_identifier": NODE_IDENTIFIER,
@@ -103,8 +104,8 @@ def get_wallet_status():
     }
 
 
-@app.route('/mine', methods=['GET'])
-def mine():
+@app.route('/api/mine', methods=['GET'])
+def api_mine():
     if len(BLOCKCHAIN.pending_transactions) == 0:
         return {"status_code": 204, "message": "No pending transactions."}
 
@@ -116,7 +117,7 @@ def mine():
 
 # This endpoint is here purely for testing reasons
 
-@app.route('/testing/grant', methods=['POST'])
+@app.route('/api/testing/grant', methods=['POST'])
 def grant_money():
     block_index = BLOCKCHAIN.add_transaction(sender="-", amount=100, recipient=NODE_IDENTIFIER)
     return {"status_code": 200, "detail": f"Transaction successfully assigned to Block {block_index}"}

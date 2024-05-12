@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <hr>
+    <div class="mt-5">
+        <h5 class="mt-3">Node identifier: {{ node_indentifier }}</h5>
+        <h5 class="mt-3">Wallet status: {{ wallet_status }}</h5>
+        <a target=”_blank” href="{{ url_for('api_wallet') }}">get JSON</a>
+    </div>
+    <hr>
+    <div class="mt-5">
+        <h3>Your transactions history:</h3>
+    </div>
+{% endblock %}

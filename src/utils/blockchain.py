@@ -2,6 +2,7 @@ from .block import Block
 from urllib.parse import urlparse
 from itertools import chain
 import requests
+from time import time
 
 
 class Blockchain(object):
@@ -90,7 +91,8 @@ class Blockchain(object):
         self.pending_transactions.append({
             'sender': sender,
             'recipient': recipient,
-            'amount': amount
+            'amount': amount,
+            'creation_date': time(),
         })
         last_block = self.get_last_block()
         return last_block.index + 1 if last_block else 1

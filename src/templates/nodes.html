@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <hr>
+    <div class="mt-4">
+        <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#newNodeModal">Register node +</button>
+        <h3 class="mt-3">Registered Nodes:</h3>
+        <a target=”_blank” href="{{ url_for('api_nodes') }}">get JSON</a>
+    </div>
+    <table class="mt-3 border table table-secondary table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if nodes %}
+                {% for node in nodes %}
+                    <tr>
+                        <th scope="row">{{ loop.index }}</th>
+                        <td>{{ node }}</td>
+                    </tr>    
+                {% endfor %}
+            {% endif %}    
+        </tbody>
+    </table>
+
+<!-- Modal -->
+<div class="modal fade" id="newNodeModal" tabindex="-1" aria-labelledby="newNodeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="newNodeModalLabel">New node</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            Node URL address: <input id="input" class="form-control" type="text" data-url="{{ url_for('api_register_nodes') }}">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button id="registerNode" type="button" class="btn btn-success">Register node</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+{% endblock %}
