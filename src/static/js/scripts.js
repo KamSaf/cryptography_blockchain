@@ -7,7 +7,7 @@ function message(msg, status) {
     `
 }
 
-function lastNodeIndex() {
+function lastRowIndex() {
     const rows = document.getElementsByName('rowIndex');
     let lastIndex = 0;
     rows.forEach(function(value) {
@@ -28,24 +28,30 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Node register event
 document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.pathname != '/nodes') {
+        return;
+    }
     const address = window.location.origin;
     const btn = document.getElementById('registerNode');
     const modal = new bootstrap.Modal(document.getElementById('newNodeModal'));
     btn.addEventListener('click', async () => {
         const input = document.getElementById('input');
-        const url = address + input.getAttribute('data-url');
+        const url = address + btn.getAttribute('data-url');
         const msgBox = document.getElementById('msgBox');
         const errorBox = document.getElementById('errorBox');
         const nodesTable = document.getElementById('nodesTableBody');
         msgBox.innerHTML = '';
         errorBox.innerHTML = '';
+        input.classList.remove('is-invalid');
 
         let inputUrl = null;
         try {
             inputUrl = new URL(input.value);
         } catch (err) {
             errorBox.innerHTML += message('Invalid URL address given.', 'danger');
+            input.classList.add('is-invalid');
             return;
         }
         const response = await fetch(
@@ -61,14 +67,87 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.status_code === 201) {
                 responseStatus = 'success';
                 nodesTable.innerHTML += `\
-                    <tr><th scope="row">${lastNodeIndex()}</th>\
+                    <tr><th scope="row">${lastRowIndex()}</th>\
                     <td>${inputUrl.host}</td></tr>`;
-                modal.hide();
             } else if (data.status_code === 409) {
                 responseStatus = 'warning';
-                modal.hide();
             }
-            msgBox.innerHTML += message(data.detail, responseStatus);
+            if (responseStatus != 'danger') {
+                modal.hide();
+                msgBox.innerHTML += message(data.detail, responseStatus);
+                input.value = '';
+                return;
+            }
+            errorBox.innerHTML += message(data.detail, responseStatus);
+        });
+    });
+});
+
+// Transaction creation event
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.pathname != '/transactions') {
+        return;
+    }
+    const address = window.location.origin;
+    const btn = document.getElementById('createTransaction');
+    const modal = new bootstrap.Modal(document.getElementById('newTransactionModal'));
+    btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(document.getElementById('form'), btn);
+        const jsonData = JSON.stringify(Object.fromEntries(formData));
+        const url = address + btn.getAttribute('data-url');
+        const msgBox = document.getElementById('msgBox');
+        const errorBox = document.getElementById('errorBox');
+        const transactionsTable = document.getElementById('transactionsTableBody');
+        msgBox.innerHTML = '';
+        errorBox.innerHTML = '';
+        const inputElements = document.getElementsByTagName('input');
+
+        let error = false;
+        for (let i=0; i<inputElements.length; i++) {
+            const el = inputElements[i]; 
+            if (!el.value) {
+                error = true;
+                errorBox.innerHTML += message(`Field value missing or invalid (${el.getAttribute('name')})`, 'danger');
+                el.classList.add('is-invalid');
+            } else {
+                el.classList.remove('is-invalid');
+            }
+        }
+
+        if (error) {
+            return;
+        }
+        const response = await fetch(
+            url, 
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: jsonData
+            },
+        );
+        await response.json().then((data) => {
+            let responseStatus = 'danger';
+            if (data.status_code === 201) {
+                responseStatus = 'success';
+                const date = new Date();
+                const datetime = `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}\
+                                    ${date.getHours()}:${date.getMinutes()}`;
+                transactionsTable.innerHTML += `\
+                    <tr><th scope="row">${lastRowIndex()}</th>\
+                    <td>${senderInput.value}</td></tr>
+                    <td>${recipientInput.value}</td></tr>
+                    <td>${amountInput.value}</td></tr>
+                    <td>${datetime}</td></tr>
+                    `;
+                modal.hide();
+                msgBox.innerHTML += message(data.detail, responseStatus);
+                document.getElementsByTagName('input').forEach(element => {
+                    element.value = '';
+                });
+                return;
+            }
+            errorBox.innerHTML += message(data.detail, responseStatus);
         });
     });
 });

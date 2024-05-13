@@ -8,7 +8,7 @@
             <th scope="col">Creation date</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="transactionsTableBody">
         {% if transactions %}
             {% for transaction in transactions %}
                 {% if node_indentifier and node_indentifier == transaction.sender %}

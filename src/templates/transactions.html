@@ -15,20 +15,21 @@
 <div class="modal fade" id="newTransactionModal" tabindex="-1" aria-labelledby="newTransactionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form action="POST" data-url="{{ url_for('api_new_transaction') }}">
-            <div class="modal-header">
-            <h1 class="modal-title fs-5" id="newTransactionModalLabel">New transaction</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Sender: <input class="form-control" type="text">
-                Recipient: <input class="form-control" type="text">
-                Amount: <input class="form-control" type="number">
-            </div>
-            <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-success">Create transaction</button>
-            </div>
+        <form id="form" method="POST">
+          <div class="modal-header">
+          <h1 class="modal-title fs-5" id="newTransactionModalLabel">New transaction</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="errorBox"></div>
+              Sender: <input required name="sender" class="form-control" type="text">
+              Recipient: <input required name="recipient" class="form-control" type="text">
+              Amount: <input required name="amount" min="1" class="form-control" type="number">
+          </div>
+          <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button id="createTransaction" type="submit" class="btn btn-success" data-url="{{ url_for('api_new_transaction') }}">Create transaction</button>
+          </div>
         </form>
       </div>
     </div>

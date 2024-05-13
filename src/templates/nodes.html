@@ -36,11 +36,11 @@
         </div>
         <div class="modal-body">
             <div id="errorBox"></div>
-            Node URL address: <input id="input" class="form-control" type="text" data-url="{{ url_for('api_register_nodes') }}">
+            Node URL address: <input id="input" class="form-control" type="text">
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button id="registerNode" type="button" class="btn btn-success">Register node</button>
+            <button id="registerNode" type="button" class="btn btn-success" data-url="{{ url_for('api_register_nodes') }}">Register node</button>
         </div>
       </div>
     </div>

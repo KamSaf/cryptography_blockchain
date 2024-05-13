@@ -40,7 +40,7 @@ def api_new_transaction():
 
     try:
         block_index = BLOCKCHAIN.add_transaction(sender=request_data["sender"], amount=amount, recipient=request_data["recipient"])
-        return {"status_code": 200, "detail": f"Transaction successfully assigned to Block {block_index}"}
+        return {"status_code": 201, "detail": f"Transaction successfully assigned to Block {block_index}"}
     except Exception:
         return {"status_code": 500, "detail": "Unexpected error occured"}
 
@@ -126,7 +126,7 @@ def api_mine():
 @app.route('/api/testing/grant', methods=['POST'])
 def grant_money():
     block_index = BLOCKCHAIN.add_transaction(sender="-", amount=100, recipient=NODE_IDENTIFIER)
-    return {"status_code": 200, "detail": f"Transaction successfully assigned to Block {block_index}"}
+    return {"status_code": 201, "detail": f"Transaction successfully assigned to Block {block_index}"}
 
 
 if __name__ == '__main__':
