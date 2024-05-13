@@ -174,10 +174,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     responseStatus = 'warning';
                 } else if (data.status_code === 201) {
                     responseStatus = 'success';
+                    playYoink();
                 } else {
                     responseStatus = 'danger';
                 }
-                playYoink();
                 setTimeout(() => {
                     msgBox.innerHTML += message(data.detail, responseStatus);
                     btn.innerHTML = '<span role="status">Mine!</span>';
