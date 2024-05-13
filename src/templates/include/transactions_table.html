@@ -9,6 +9,17 @@
         </tr>
     </thead>
     <tbody id="transactionsTableBody">
+        {% if pending_transactions %}
+            {% for transaction in pending_transactions %}
+                    <tr class="table-warning">
+                        <th scope="row">{{ loop.index }}</th>
+                        <td>{{ transaction.sender }}</td>
+                        <td>{{ transaction.recipient }}</td>
+                        <td>{{ transaction.amount }} YC</td>
+                        <td>{{ to_datetime(transaction.creation_date).strftime('%d-%m-%Y %H:%M') }}</td>
+                    </tr>    
+            {% endfor %}
+        {% endif %}    
         {% if transactions %}
             {% for transaction in transactions %}
                 {% if node_indentifier and node_indentifier == transaction.sender %}

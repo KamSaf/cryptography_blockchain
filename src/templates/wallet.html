@@ -10,7 +10,12 @@
     <hr>
     <div class="mt-5">
         <h3>Your transactions history:</h3>
-        {% with transactions=transactions, node_indentifier=node_indentifier %}
+        <p style="font-size: 12px;">
+            <span class="text-warning">yellow - pending</span><br>
+            <span class="text-success">green - gain</span><br>
+            <span class="text-danger">red - loss</span><br>
+        </p>
+        {% with transactions=transactions, node_indentifier=node_indentifier, pending_transaction=pending_transaction %}
             {% include 'include/transactions_table.html' %}
         {% endwith %}
     </div>

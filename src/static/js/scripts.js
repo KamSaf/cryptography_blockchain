@@ -3,8 +3,7 @@ function message(msg, status) {
         <div id="reminder_message" class="mt-3 alert alert-${status}" role="alert" style="display: block;">\
             ${msg}\
             <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>\
-        </div>\
-    `
+        </div>`
 }
 
 function lastRowIndex() {
@@ -135,10 +134,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                     ${date.getHours()}:${date.getMinutes()}`;
                 transactionsTable.innerHTML += `\
                     <tr><th scope="row">${lastRowIndex()}</th>\
-                    <td>${senderInput.value}</td></tr>
-                    <td>${recipientInput.value}</td></tr>
-                    <td>${amountInput.value}</td></tr>
-                    <td>${datetime}</td></tr>
+                    <td>${formData.get('sender')}</td>\
+                    <td>${formData.get('recipient')}</td>\
+                    <td>${formData.get('amount')}</td>\
+                    <td>${datetime}</td></tr>\
                     `;
                 modal.hide();
                 msgBox.innerHTML += message(data.detail, responseStatus);

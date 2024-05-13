@@ -96,7 +96,7 @@ class Blockchain(object):
             self.add_transaction(amount=Blockchain.REWARD, recipient=node_identifier)
         return block
 
-    def add_transaction(self, amount: float, recipient: str, sender: str | None = None) -> int:
+    def add_transaction(self, amount: float, recipient: str, sender: str = '-') -> int:
         """
         Creates new transaction and adds it to list of pending transactions.
 
@@ -180,7 +180,7 @@ class Blockchain(object):
         float -> State of wallet.
         """
         wallet_status = 0
-        transactions = self.transactions_history(address=address)
+        transactions = self.transactions_history(address=address) + self.pending_transactions
 
         for transaction in transactions:
             if transaction["recipient"] == address:

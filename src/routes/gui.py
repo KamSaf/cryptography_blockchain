@@ -21,11 +21,16 @@ def gui_nodes():
 
 @app.route('/wallet', methods=['GET'])
 def gui_wallet_status():
+    pending_transactions = []
+    for transaction in BLOCKCHAIN.pending_transactions:
+        if transaction['sender'] == NODE_IDENTIFIER or transaction['recipient'] == NODE_IDENTIFIER:
+            pending_transactions.append(transaction)
     return render_template(
         template_name_or_list='wallet.html',
         node_indentifier=NODE_IDENTIFIER,
         wallet_status=BLOCKCHAIN.check_wallet_status(address=NODE_IDENTIFIER),
-        transactions=BLOCKCHAIN.transactions_history(address=NODE_IDENTIFIER)
+        transactions=BLOCKCHAIN.transactions_history(address=NODE_IDENTIFIER),
+        pending_transactions=pending_transactions
     )
 
 
