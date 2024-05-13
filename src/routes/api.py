@@ -6,6 +6,28 @@ from src.utils.block import Block
 API_ROUTES_BP = Blueprint('api_routes', __name__)
 
 
+@app.route('/api', methods=['GET'])
+def api_list():
+    return {
+        "status_code": 200,
+        "GET": {
+            "/api": "Returns list of avaible endpoints.",
+            "/api/transactions": "Returns list of currently pending transactions.",
+            "/api/nodes": "Returns list of registered endpoints.",
+            "/api/nodes/resolve": "Syncs this nodes blockchain with registered nodes.",
+            "/api/chain": "Returns full blockchain.",
+            "/api/wallet": "Returns wallet state of this node.",
+            "/api/mine": " 	Mines new block.",
+        },
+        "POST": {
+            "/api/transactions/new": "Adds new pending transaction to the blockchain.",
+            "/api/nodes/register": "Registers new node address.",
+            "/api/testing/grant": "TESTING Grants 100 YoinkCoins to this node.",
+
+        }
+    }
+
+
 @app.route('/api/transactions', methods=['GET'])
 def api_transactions():
     return {
