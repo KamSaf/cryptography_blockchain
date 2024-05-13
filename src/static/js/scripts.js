@@ -150,3 +150,66 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Mining
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.pathname != '/') {
+        return;
+    }
+
+    const address = window.location.origin;
+    const btn = document.querySelector('.mine');
+    const url = address + btn.getAttribute('data-url');
+    const msgBox = document.getElementById('msgBox');
+    btn.addEventListener('click', async () => {
+        if (btn.getAttribute('data-mining') === 'false') {
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"\
+             aria-hidden="true"></span> <span role="status">Mining...</span>';
+            btn.setAttribute('data-mining', true);
+            btn.setAttribute('disabled', true);
+
+            const response = await fetch(url, { method: "GET" });
+            await response.json().then((data) => {
+                if (data.status_code === 204) {
+                    responseStatus = 'warning';
+                } else if (data.status_code === 201) {
+                    responseStatus = 'success';
+                } else {
+                    responseStatus = 'danger';
+                }
+                playYoink();
+                setTimeout(() => {
+                    msgBox.innerHTML += message(data.detail, responseStatus);
+                    btn.innerHTML = '<span role="status">Mine!</span>';
+                    btn.setAttribute('data-mining', false);
+                    btn.removeAttribute('disabled');    
+                }, 800) // mining the YoinkCoin hehe
+            });            
+        }
+    });
+});
+
+// Syncing blockchain
+document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.querySelector('.sync-blockchain');
+    btn.addEventListener('click', async () => {
+        if (btn.getAttribute('data-syncing') === 'true') {
+            btn.innerHTML = 'Sync blockchain';
+            btn.setAttribute('data-syncing', false);
+            btn.removeAttribute('disabled');
+        } else {
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"\
+             aria-hidden="true"></span> Syncing...';
+            btn.setAttribute('data-syncing', true);
+            btn.setAttribute('disabled', true);
+        }
+    });
+});
+
+
+
+
+
+
+
+

@@ -15,7 +15,7 @@
                         <th scope="row">{{ loop.index }}</th>
                         <td>{{ transaction.sender }}</td>
                         <td>{{ transaction.recipient }}</td>
-                        <td>{{ transaction.amount }} YC</td>
+                        <td>{{ transaction.amount|float }} YC</td>
                         <td>{{ to_datetime(transaction.creation_date).strftime('%d-%m-%Y %H:%M') }}</td>
                     </tr>    
             {% endfor %}
@@ -29,10 +29,10 @@
                 {% else %}
                     <tr>
                 {% endif %}
-                        <th scope="row">{{ loop.index }}</th>
+                        <th scope="row">{% if pending_transactions %}{{ loop.index + pending_transactions|length }}{% else %}{{ loop.index }}{% endif %}</th>
                         <td>{{ transaction.sender }}</td>
                         <td>{{ transaction.recipient }}</td>
-                        <td>{{ transaction.amount }} YC</td>
+                        <td>{{ transaction.amount|float }} YC</td>
                         <td>{{ to_datetime(transaction.creation_date).strftime('%d-%m-%Y %H:%M') }}</td>
                     </tr>    
             {% endfor %}

@@ -3,11 +3,9 @@
 {% block content %}
 <div class="mt-2" style="text-align: center; ">
     <h6 class="mt-3" style="text-align: center;">Completely legit cryptocurrency</h6>
-    <button class="mt-3 btn btn-lg btn-success">
+    <button class="mt-3 btn btn-lg btn-success mine" data-mining="false" data-url="{{ url_for('api_mine') }}">
         <span role="status">Mine!</span>
-        <!-- <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-        <span role="status">Mining...</span>       -->
     </button><br>
-    <button class="mt-3 btn btn-sm btn-dark">Sync blockchain</button>
+    <button class="mt-3 btn btn-sm btn-dark sync-blockchain">Sync blockchain</button>
 </div>
 {% endblock %}
