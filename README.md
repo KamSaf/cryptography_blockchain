@@ -12,7 +12,9 @@ YoinkCoin allows users to create new transactions and mine blocks in which they 
 - Flask 3.0.3,
 - requests 2.31.0,
 - JavaScript,
-- Bootstrap5 5.3.3,
+- Bootstrap5 5.3.3
+- gunicorn 22.0.0,
+- Docker
 
 
 ## How to install (for Linux, macOS)
@@ -36,7 +38,7 @@ To start application run in development mode:
 
         python app.py
 
-Instead, to start production server use:
+Instead, to start <a href="https://gunicorn.org/">gunicorn</a> production server use:
         
         gunicorn -b 0.0.0.0:5000 app:app
 
@@ -56,3 +58,15 @@ Instead, to start production server use:
 | ```/api/transactions/new``` | ```POST``` | Adds new pending transaction to the blockchain. | ```sender```, ```recipient```, ```amount``` |
 | ```/api/nodes/register``` | ```POST``` | Registers new node address. | ```nodes``` |
 | ```/api/testing/grant``` | ```POST``` | ***TESTING*** Grants 100 YoinkCoins to this node.  | N/A |
+
+
+## Containerization (Docker)
+
+YoinkCoin is available in a form of Docker image at <a href="https://hub.docker.com/repository/docker/kamsaf42/yoinkcoin/general">Dockerhub repository</a>.
+
+To use it, install Docker on your system and run following commands:
+
+        docker pull kamsaf42/yoinkcoin:1.0
+        docker run --name yoinkcon -p 5000:5000 kamsaf42/yoinkcoin:1.0
+
+YoinkCoin image when started runs with <a href="https://gunicorn.org/">gunicorn</a> production server on port 5000.
