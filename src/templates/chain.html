@@ -1,7 +1,36 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="mt-2" style="text-align: center; ">
-    hello
-</div>
+    <div class="mt-2 container">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col">
+                {% for block in chain %}
+                    <div class="card mb-3" style="width: 50rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Block: {{ block.index }}</h5>
+                            <p class="card-text">
+                                <b>Proof:</b> {{ block.proof }} <br>
+                                <b>Previous hash:</b> {{ block.previous_hash }}
+                            </p>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            {% for transaction in block.transactions %}
+                                <li class="list-group-item">
+                                    <b>Sender:</b> {{ transaction.sender }} <br>
+                                    <b>Recipient:</b> {{ transaction.recipient }} <br>
+                                    <b>Amount:</b> {{ transaction.amount }} YC <br>
+                                    <b>Creation date:</b> {{ to_datetime(transaction.creation_date).strftime('%d-%m-%Y %H:%M') }} <br>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <div class="card-body">
+                            <b>Date:</b> {{ to_datetime(block.timestamp).strftime('%d-%m-%Y %H:%M') }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="col"></div>    
+        </div>
+    </div>
 {% endblock %}

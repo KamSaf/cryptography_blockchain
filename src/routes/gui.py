@@ -41,4 +41,6 @@ def gui_wallet_status():
 
 @app.route('/chain', methods=['GET'])
 def gui_full_chain():
-    return render_template(template_name_or_list='chain.html')
+    chain = BLOCKCHAIN.get_all_blocks()
+    chain.reverse()
+    return render_template(template_name_or_list='chain.html', chain=chain)
