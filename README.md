@@ -32,9 +32,13 @@ Run this command to install required dependencies
 
 ## How to run
 
-To start application run:
+To start application run in development mode:
 
         python app.py
+
+Instead, to start production server use:
+        
+        gunicorn -b 0.0.0.0:5000 app:app
 
 
 ## API Endpoints
