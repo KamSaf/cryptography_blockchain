@@ -1,0 +1,4 @@
+pyrightconfig.json
+setup.cfg
+src/__pycache__
+__pycache__
