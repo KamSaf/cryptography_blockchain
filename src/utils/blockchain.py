@@ -48,13 +48,29 @@ class Blockchain(object):
         bool -> True if node/nodes are registered, False if not.
 
         """
-        if type(node_or_nodes) is str:
-            return urlparse(node_or_nodes).netloc in self.nodes
-
+        node_or_nodes = [node_or_nodes] if type(node_or_nodes) is str else node_or_nodes
         for node in node_or_nodes:
             if urlparse(node).netloc in self.nodes:
                 return True
-        return False       
+        return False
+
+    def is_node_valid(self, node_or_nodes: str | list[str]) -> str | None:
+        """
+        Checks if node/nodes are valid addresses.
+
+        Parameters:
+        ------------------------------------------------------
+        node_or_nodes: str | list[str] -> URL address or list of URL addresses.
+
+        Returns:
+        ------------------------------------------------------
+        str | None -> Invalid node address, None if address/addresses are valid.
+        """
+        node_or_nodes = [node_or_nodes] if type(node_or_nodes) is str else node_or_nodes
+        for node in node_or_nodes:
+            if not urlparse(node).netloc:
+                return node
+        return None
 
     def register_node(self, node: str) -> None:
         """
