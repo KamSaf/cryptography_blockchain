@@ -31,11 +31,23 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     const address = window.location.origin;
     const btn = document.getElementById('registerNode');
+    const modal = new bootstrap.Modal(document.getElementById('newNodeModal'));
     btn.addEventListener('click', async () => {
         const input = document.getElementById('input');
         const url = address + input.getAttribute('data-url');
         const msgBox = document.getElementById('msgBox');
+        const errorBox = document.getElementById('errorBox');
         const nodesTable = document.getElementById('nodesTableBody');
+        msgBox.innerHTML = '';
+        errorBox.innerHTML = '';
+
+        let inputUrl = null;
+        try {
+            inputUrl = new URL(input.value);
+        } catch (err) {
+            errorBox.innerHTML += message('Invalid URL address given.', 'danger');
+            return;
+        }
         const response = await fetch(
             url, 
             {
@@ -48,12 +60,13 @@ document.addEventListener('DOMContentLoaded', function() {
             let responseStatus = 'danger';
             if (data.status_code === 201) {
                 responseStatus = 'success';
-                const inputUrl = new URL(input.value);
                 nodesTable.innerHTML += `\
                     <tr><th scope="row">${lastNodeIndex()}</th>\
-                    <td>${inputUrl.host}</td></tr>`
+                    <td>${inputUrl.host}</td></tr>`;
+                modal.hide();
             } else if (data.status_code === 409) {
                 responseStatus = 'warning';
+                modal.hide();
             }
             msgBox.innerHTML += message(data.detail, responseStatus);
         });
