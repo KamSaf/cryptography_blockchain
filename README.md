@@ -70,3 +70,7 @@ To use it, install Docker on your system and run following commands:
         docker run --name yoinkcon -p 5000:5000 kamsaf42/yoinkcoin:1.0
 
 YoinkCoin image when started runs with <a href="https://gunicorn.org/">gunicorn</a> production server on port 5000.
+
+<hr>
+
+Created by Kamil Safaryjski 2024
