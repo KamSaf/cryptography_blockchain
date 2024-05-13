@@ -6,6 +6,8 @@
     <button class="mt-3 btn btn-lg btn-success mine" data-mining="false" data-url="{{ url_for('api_mine') }}">
         <span role="status">Mine!</span>
     </button><br>
-    <button class="mt-3 btn btn-sm btn-dark sync-blockchain">Sync blockchain</button>
+    <button class="mt-3 btn btn-sm btn-dark sync-blockchain" data-syncing="false" data-url="{{ url_for('api_consensus') }}">
+        Sync blockchain
+    </button>
 </div>
 {% endblock %}

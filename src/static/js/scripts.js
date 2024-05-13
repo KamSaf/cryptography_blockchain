@@ -191,25 +191,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Syncing blockchain
 document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.pathname != '/') {
+        return;
+    }
+
     const btn = document.querySelector('.sync-blockchain');
+    const address = window.location.origin;
+    const url = address + btn.getAttribute('data-url');
     btn.addEventListener('click', async () => {
-        if (btn.getAttribute('data-syncing') === 'true') {
-            btn.innerHTML = 'Sync blockchain';
-            btn.setAttribute('data-syncing', false);
-            btn.removeAttribute('disabled');
-        } else {
+        if (btn.getAttribute('data-syncing') === 'false') {
             btn.innerHTML = '<span class="spinner-border spinner-border-sm"\
-             aria-hidden="true"></span> Syncing...';
+            aria-hidden="true"></span> Syncing...';
             btn.setAttribute('data-syncing', true);
             btn.setAttribute('disabled', true);
+        
+            const response = await fetch(url, { method: "GET" });
+            await response.json().then((data) => {
+                let responseStatus = 'danger';
+                if (data.status_code === 200) {
+                    responseStatus = 'success';
+                }
+                setTimeout(() => {
+                    msgBox.innerHTML += message(data.detail, responseStatus);
+                    btn.innerHTML = 'Sync blockchain';
+                    btn.setAttribute('data-syncing', false);
+                    btn.removeAttribute('disabled');
+                }, 800)
+            });            
         }
     });
 });
-
-
-
-
-
-
-
-

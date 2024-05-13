@@ -82,12 +82,12 @@ def api_consensus():
     if replaced:
         response = {
             'status_code': 200,
-            'message': 'Chain was replaced',
+            'detail': 'Chain was replaced',
         }
     else:
         response = {
             'status_code': 200,
-            'message': 'This chain is authoritative',
+            'detail': 'This chain is authoritative',
         }
     return response
 
@@ -113,7 +113,7 @@ def api_wallet():
 @app.route('/api/mine', methods=['GET'])
 def api_mine():
     if len(BLOCKCHAIN.pending_transactions) == 0:
-        return {"status_code": 204, "message": "No pending transactions."}
+        return {"status_code": 204, "detail": "No pending transactions."}
 
     previous_block = BLOCKCHAIN.get_last_block()
     proof = Block.proof_of_work(previous_proof=previous_block.proof)
