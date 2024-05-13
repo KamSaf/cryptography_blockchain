@@ -66,8 +66,8 @@ YoinkCoin is available in a form of Docker image at <a href="https://hub.docker.
 
 To use it, install Docker on your system and run following commands:
 
-        docker pull kamsaf42/yoinkcoin:1.0
-        docker run --name yoinkcon -p 5000:5000 kamsaf42/yoinkcoin:1.0
+        docker pull kamsaf42/yoinkcoin:latest
+        docker run --name yoinkcon -p 5000:5000 kamsaf42/yoinkcoin:latest
 
 YoinkCoin image when started runs with <a href="https://gunicorn.org/">gunicorn</a> production server on port 5000.
 

@@ -1,4 +1,4 @@
-FROM python
+FROM python:3.13.0b1-slim-bullseye
 WORKDIR /app
 ADD . /app
 RUN pip install -r requirements.txt
