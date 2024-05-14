@@ -1,7 +1,7 @@
 ## Description
 
 Blockchain cryptocurrency application created for Cryptography classes.
-This application offers both frontend and backend interfaces for interaction with the blockchain.
+This application offers both GUI and API interfaces for interaction with the blockchain.
 
 YoinkCoin allows users to create new transactions and mine blocks in which they are stored in a blockchain architecture.
 
