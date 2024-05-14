@@ -1,6 +1,8 @@
 <div align="center">
   <img alt="YoinkConLogo" src="https://github.com/KamSaf/yoinkcoin/assets/116653905/d5c2605c-2291-46cd-baa8-893de72487f7" width="200px"/>
         <h1>YoinkCoin</h1>
+        <img src="https://img.shields.io/github/contributors/KamSaf/yoinkcoin"/></a>
+      <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/KamSaf/yoinkcoin"/>
 </div>
 
 
