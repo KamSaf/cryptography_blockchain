@@ -18,7 +18,7 @@ def gui_transactions():
 
 @app.route('/nodes', methods=['GET'])
 def gui_nodes():
-    return render_template(template_name_or_list='nodes.html', nodes=list(BLOCKCHAIN.nodes).reverse())
+    return render_template(template_name_or_list='nodes.html', nodes=list(BLOCKCHAIN.nodes))
 
 
 @app.route('/wallet', methods=['GET'])
@@ -35,7 +35,7 @@ def gui_wallet_status():
         node_indentifier=NODE_IDENTIFIER,
         wallet_status=BLOCKCHAIN.check_wallet_status(address=NODE_IDENTIFIER),
         transactions=transactions,
-        pending_transactions=pending_transactions.reverse()
+        pending_transactions=pending_transactions
     )
 
 

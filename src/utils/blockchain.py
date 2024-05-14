@@ -259,7 +259,10 @@ class Blockchain(object):
         min_length = len(self.chain)
 
         for node in neighbours:
-            response = requests.get(f'http://{node}/chain')
+            try:
+                response = requests.get(f'http://{node}/chain')
+            except Exception:
+                continue
 
             if response.status_code != 200:
                 continue

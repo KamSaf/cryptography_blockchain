@@ -15,7 +15,7 @@
             <span class="text-success">green - gain</span><br>
             <span class="text-danger">red - loss</span><br>
         </p>
-        {% with transactions=transactions, node_indentifier=node_indentifier, pending_transaction=pending_transaction %}
+        {% with transactions=transactions, node_indentifier=node_indentifier, pending_transactions=pending_transactions %}
             {% include 'include/transactions_table.html' %}
         {% endwith %}
     </div>
