@@ -1,9 +1,17 @@
+<div align="center">
+  <img alt="YoinkConLogo" src="https://github.com/KamSaf/yoinkcoin/assets/116653905/d5c2605c-2291-46cd-baa8-893de72487f7" width="200px"/>
+        <h1>YoinkCoin</h1>
+</div>
+
+
 ## Description
 
 Blockchain cryptocurrency application created for Cryptography classes.
 This application offers both GUI and API interfaces for interaction with the blockchain.
 
-YoinkCoin allows users to create new transactions and mine blocks in which they are stored in a blockchain architecture.
+<p align="center"><img src=".github/gifs/yoinkcoin1.gif" width="90%" height="50%"></p>
+
+YoinkCoin allows users to create new transactions and save them in mined blocks in a blockchain architecture.
 
 
 ## Technologies and tools used:
@@ -42,6 +50,28 @@ Instead, to start <a href="https://gunicorn.org/">gunicorn</a> production server
         
         gunicorn -b 0.0.0.0:5000 app:app
 
+
+## GUI Demo GIFs
+
+
+***Block mining***
+<p align="center"><img src=".github/gifs/yoinkcoin1.gif" width="90%" height="50%"></p>
+
+
+***Transaction creation***
+<p align="center"><img src=".github/gifs/yoinkcoin2.gif" width="90%" height="50%"></p>
+
+
+***Nodes registration***
+<p align="center"><img src=".github/gifs/yoinkcoin3.gif" width="90%" height="50%"></p>
+
+
+***Sync blockchain***
+<p align="center"><img src=".github/gifs/yoinkcoin4.gif" width="90%" height="50%"></p>
+
+
+***Subpage overview***
+<p align="center"><img src=".github/gifs/yoinkcoin5.gif" width="90%" height="50%"></p>
 
 ## API Endpoints
 
