@@ -46,7 +46,7 @@ Run this command to install required dependencies
 
 To start application run in development mode:
 
-        python app.py
+        flask --app app run --debug
 
 Instead, to start <a href="https://gunicorn.org/">gunicorn</a> production server use:
         
